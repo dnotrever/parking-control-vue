@@ -3,11 +3,12 @@
 </script>
 
 <template>
-    <nav class="py-10 px-8 border-b border-gray-200">
+    <nav class="py-6 px-16 border-b border-gray-200">
         <div class="max-w-7xl mx-auto">
             <div class="flex items-center justify-between">
-                <div class="menu-left">
-                    <a href="#" class="text-xl">Peter</a>
+                <div class="menu-left flex flex-col">
+                    <span class="text-sm text-slate-500">Operator</span>
+                    <h3 class="text-xl">Peter</h3>
                 </div>
                 <div class="menu-center flex space-x-12">
                     <a href="" class="text-purple-700">
