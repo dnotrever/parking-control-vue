@@ -1,10 +1,6 @@
-<script setup>
-    import { RouterLink, RouterView } from 'vue-router'
-</script>
-
 <template>
 
-    <nav class="py-6 px-16 border-b border-gray-200">
+    <nav class="py-6 px-16 border-b border-gray-200" v-if="userStore.user.isAuthenticated">
 
         <div class="max-w-7xl mx-auto">
 
@@ -51,14 +47,30 @@
 
 <script>
 
+    import { RouterLink, RouterView } from 'vue-router'
+    import { useUserStore } from '@/stores/user'
     import Toast from '@/components/Toast.vue'
+    import axios from 'axios'
 
     export default {
 
+        setup() {
+            const userStore = useUserStore()
+            return {
+                userStore
+            }
+        },
+
         components: {
             Toast
-        }
-        
+        },
+
+        beforeCreate() {
+            this.userStore.initStore()
+            const token = this.userStore.access
+            axios.defaults.headers.common['Authorization'] = token ? 'Bearer ' + token : ''
+        },
+
     }
 
 </script>

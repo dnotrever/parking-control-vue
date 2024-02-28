@@ -1,30 +1,26 @@
 <template>
 
-    <div class="w-96 mx-auto">
+    <div class="w-96 mx-auto mt-32">
 
         <div class="main">
 
             <div class="p-12 bg-white border border-gray-200 rounded-lg">
 
-                <form class="space-y-6 flex flex-col items-center" v-on:submit.prevent="submitForm">
+                <form class="space-y-6 flex flex-col items-center" @submit.prevent="submitForm">
 
                     <h2 class="mb-2 text-2xl">Access</h2>
 
                     <div>
-                        <label class="ms-1">Email</label><br>
-                        <input type="email" v-model="form.email" placeholder="Insert here the email address" class="w-full mt-2 py-2 px-3 border border-gray-200 rounded-lg">
+                        <label>Email</label><br>
+                        <input type="text" v-model="form.email" @input="handleInput('email')" placeholder="Insert here the email address" class="w-full mt-1 py-2 px-3 border border-gray-200 rounded-lg">
+                        <p class="text-red-500" v-if="errors.email">{{ errors.email }}</p>
                     </div>
 
                     <div>
-                        <label class="ms-1">Password</label><br>
-                        <input type="password" v-model="form.password" placeholder="Insert here the password" class="w-full mt-2 py-2 px-3 border border-gray-200 rounded-lg" autocomplete>
+                        <label>Password</label><br>
+                        <input type="password" v-model="form.password" @input="handleInput('password')" placeholder="Insert here the password" class="w-full mt-2 py-2 px-3 border border-gray-200 rounded-lg" autocomplete>
+                        <p class="text-red-500" v-if="errors.password">{{ errors.password }}</p>
                     </div>
-
-                    <template v-if="errors.length > 0">
-                        <div class="bg-red-300 text-whie rounded-lg px-6 py-3 w-full">
-                            <p v-for="error in errors" v-bind:key="error">{{ error }}</p>
-                        </div>
-                    </template>
 
                     <div>
                         <button class="w-full mt-2 py-2 px-6 bg-purple-600 text-white rounded-lg">Login</button>
@@ -48,42 +44,39 @@
     export default {
 
         setup() {
-
             const userStore = useUserStore()
-
             return {
                 userStore
             }
-
         },
 
         data() {
-
             return {
                 form: {
                     email: '',
                     password: '',
                 },
-                errors: [],
+                errors: {},
             }
-
         },
 
         methods: {
 
+            handleInput(field) {
+                delete this.errors[field]
+            },
+
             async submitForm() {
 
-                this.errors = []
-
                 if (this.form.email === '') {
-                    this.errors.push('Your name is missing.')
+                    this.errors.email = 'Your email is missing.';
                 }
 
                 if (this.form.password === '') {
-                    this.errors.push('Your password is missing.')
+                    this.errors.password = 'Your password is missing.';
                 }
 
-                if (this.errors.length === 0) {
+                if (Object.keys(this.errors).length === 0) {
 
                     await axios
                         .post('/api/v1/login/', this.form)
@@ -107,7 +100,8 @@
 
                 }
 
-            }
+            },
+
         },
 
     }
