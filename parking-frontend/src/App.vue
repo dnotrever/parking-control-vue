@@ -13,16 +13,16 @@
 
                 <div class="menu-center flex space-x-12">
 
-                    <RouterLink to="/home" class="text-purple-700">
-                        <i class="fa-solid fa-house"></i>
+                    <RouterLink to="/home">
+                        <i class="fa-solid fa-house text-xl"></i>
                     </RouterLink>
 
-                    <RouterLink to="/cars">
-                        <i class="fa-solid fa-car"></i>
+                    <RouterLink to="/car-list">
+                        <i class="fa-solid fa-car-side text-xl"></i>
                     </RouterLink>
 
-                    <RouterLink to="/search">
-                        <i class="fa-solid fa-magnifying-glass"></i>
+                    <RouterLink to="/car-insert">
+                        <i class="fa-solid fa-arrow-right-to-bracket text-xl"></i>
                     </RouterLink>
 
                 </div>
@@ -38,7 +38,9 @@
     </nav>
 
     <main class="px-8 py-6 bg-gray-100">
-        <RouterView />
+        <div class="p-6 bg-white border border-gray-200 rounded-lg flex flex-col items-center">
+            <RouterView />
+        </div>
     </main>
 
     <Toast />
@@ -74,6 +76,3 @@
     }
 
 </script>
-
-<style scoped>
-</style>

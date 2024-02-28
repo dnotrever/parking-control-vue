@@ -2,8 +2,8 @@ import { createRouter, createWebHistory } from 'vue-router'
 import WelcomeView from '../views/WelcomeView.vue'
 import LoginView from '../views/LoginView.vue'
 import HomeView from '../views/HomeView.vue'
-import CarsView from '../views/CarsView.vue'
-import SearchView from '../views/SearchView.vue'
+import ListCarsView from '../views/ListCarsView.vue'
+import InsertCarView from '../views/InsertCarView.vue'
 
 const router = createRouter({
 
@@ -26,14 +26,14 @@ const router = createRouter({
             component: HomeView
         },
         {
-            path: '/cars',
-            name: 'cars',
-            component: CarsView
+            path: '/car-list',
+            name: 'car-list',
+            component: ListCarsView
         },
         {
-            path: '/search',
-            name: 'search',
-            component: SearchView
+            path: '/car-insert',
+            name: 'car-insert',
+            component: InsertCarView
         },
     ]
 
