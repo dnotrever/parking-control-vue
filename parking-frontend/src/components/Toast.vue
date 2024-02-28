@@ -1,10 +1,8 @@
 <script setup>
 
-import { useToastStore } from '@/stores/toast'
+    import { useToastStore } from '@/stores/toast'
 
-const store = useToastStore()
-
-return { store }
+    const store = useToastStore()
 
 </script>
 
