@@ -1,36 +1,28 @@
 <template>
 
-    <div class="w-96 mx-auto mt-32">
+    <div class="w-96 mx-auto mt-32 p-12 bg-white border border-gray-200 rounded-lg">
 
-        <div class="main">
+        <form class="space-y-6 flex flex-col items-center" @submit.prevent="submitForm">
 
-            <div class="p-12 bg-white border border-gray-200 rounded-lg">
+            <h2 class="mb-2 text-2xl">Access</h2>
 
-                <form class="space-y-6 flex flex-col items-center" @submit.prevent="submitForm">
-
-                    <h2 class="mb-2 text-2xl">Access</h2>
-
-                    <div>
-                        <label>Email</label><br>
-                        <input type="text" v-model="form.email" @input="handleInput('email')" placeholder="Insert here the email address" class="w-full mt-1 py-2 px-3 border border-gray-200 rounded-lg">
-                        <p class="text-red-500" v-if="errors.email">{{ errors.email }}</p>
-                    </div>
-
-                    <div>
-                        <label>Password</label><br>
-                        <input type="password" v-model="form.password" @input="handleInput('password')" placeholder="Insert here the password" class="w-full mt-2 py-2 px-3 border border-gray-200 rounded-lg" autocomplete>
-                        <p class="text-red-500" v-if="errors.password">{{ errors.password }}</p>
-                    </div>
-
-                    <div>
-                        <button class="w-full mt-2 py-2 px-6 bg-purple-600 text-white rounded-lg">Login</button>
-                    </div>
-
-                </form>
-
+            <div>
+                <label>Email</label><br>
+                <input type="text" v-model="form.email" @input="handleInput('email')" placeholder="Insert here the email address" class="w-full mt-1 py-2 px-3 border border-gray-200 rounded-lg">
+                <p class="text-red-500" v-if="errors.email">{{ errors.email }}</p>
             </div>
 
-        </div>
+            <div>
+                <label>Password</label><br>
+                <input type="password" v-model="form.password" @input="handleInput('password')" placeholder="Insert here the password" class="w-full mt-2 py-2 px-3 border border-gray-200 rounded-lg" autocomplete>
+                <p class="text-red-500" v-if="errors.password">{{ errors.password }}</p>
+            </div>
+
+            <div>
+                <button class="w-full mt-2 py-2 px-6 bg-purple-600 text-white rounded-lg">Login</button>
+            </div>
+
+        </form>
 
     </div>
 

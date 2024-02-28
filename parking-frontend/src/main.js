@@ -12,9 +12,10 @@ window.__VUE_PROD_HYDRATION_MISMATCH_DETAILS__ = false
 axios.defaults.baseURL = 'http://127.0.0.1:8000'
 
 const app = createApp(App)
+
 const pinia = createPinia()
+app.use(pinia)
 
 app.use(router, axios)  
-app.use(pinia)       
 
 app.mount('#app')

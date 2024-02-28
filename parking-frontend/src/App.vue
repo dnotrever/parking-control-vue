@@ -8,7 +8,7 @@
 
                 <div class="menu-left flex flex-col">
                     <span class="text-sm text-slate-500">Operator</span>
-                    <h3 class="text-xl">Peter</h3>
+                    <h3 class="text-xl">{{ userStore.user.name }}</h3>
                 </div>
 
                 <div class="menu-center flex space-x-12">
@@ -37,10 +37,10 @@
 
     </nav>
 
-    <main class="px-8 py-6 bg-gray-100">
-        <div class="p-6 bg-white border border-gray-200 rounded-lg flex flex-col items-center">
+    <main class="h-screen px-8 py-6 bg-gray-100">
+        <!-- <div class="p-6 bg-white border border-gray-200 rounded-lg flex flex-col items-center"> -->
             <RouterView />
-        </div>
+        <!-- </div> -->
     </main>
 
     <Toast />
@@ -69,7 +69,7 @@
 
         beforeCreate() {
             this.userStore.initStore()
-            const token = this.userStore.access
+            const token = this.userStore.user.access
             axios.defaults.headers.common['Authorization'] = token ? 'Bearer ' + token : ''
         },
 

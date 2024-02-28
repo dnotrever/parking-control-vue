@@ -31,7 +31,7 @@ export const useUserStore = defineStore({
 
                 this.refreshToken()
 
-                console.log('Initializaed User:', this.user) //   DEBUG   //
+                // console.log('Initializaed User:', this.user)
 
             }
 
@@ -39,7 +39,7 @@ export const useUserStore = defineStore({
 
         setToken(data) {
 
-            console.log('setToken', data) //   DEBUG   //
+            // console.log('setToken', data)
 
             this.user.access = data.access
             this.user.refresh = data.refresh
@@ -52,7 +52,7 @@ export const useUserStore = defineStore({
 
         removeToken() {
 
-            console.log('removeToken') //   DEBUG   //
+            // console.log('removeToken')
 
             this.user.refresh = null
             this.user.access = null
@@ -71,7 +71,7 @@ export const useUserStore = defineStore({
 
         setUserInfo(user) {
 
-            console.log('setUserInfo', user) //   DEBUG   //
+            // console.log('setUserInfo', user)
 
             this.user.id = user.id
             this.user.name = user.name
@@ -81,7 +81,7 @@ export const useUserStore = defineStore({
             localStorage.setItem('user.name', this.user.name)
             localStorage.setItem('user.email', this.user.email)
 
-            console.log('User', this.user) //   DEBUG   //
+            // console.log('User', this.user)
 
         },
 
