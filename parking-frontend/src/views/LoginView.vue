@@ -6,15 +6,19 @@
 
             <h2 class="mb-2 text-2xl">Access</h2>
 
-            <div>
-                <label>Email</label><br>
-                <input type="text" v-model="form.email" @input="handleInput('email')" placeholder="Insert here the email address" class="w-full mt-1 py-2 px-3 border border-gray-200 rounded-lg">
+            <div class="form-group">
+                <label class="form-label">Email</label>
+                <input type="text" placeholder="Insert here the email address" class="form-control mt-1 py-2 px-3"
+                    v-model="form.email" @input="removeError('email')" :class="{'is-invalid': errors.email}"
+                >
                 <p class="text-red-500" v-if="errors.email">{{ errors.email }}</p>
             </div>
 
-            <div>
-                <label>Password</label><br>
-                <input type="password" v-model="form.password" @input="handleInput('password')" placeholder="Insert here the password" class="w-full mt-2 py-2 px-3 border border-gray-200 rounded-lg" autocomplete>
+            <div class="form-group">
+                <label class="form-label">Password</label>
+                <input type="password"  placeholder="Insert here the password" class="form-control mt-2 py-2 px-3" autocomplete
+                    v-model="form.password" @input="removeError('password')" :class="{'is-invalid': errors.password}"
+                >
                 <p class="text-red-500" v-if="errors.password">{{ errors.password }}</p>
             </div>
 
@@ -30,10 +34,13 @@
 
 <script>
 
+    import { useUserStore } from '@/stores/user'
+    import { inputsHandler } from '@/mixins/inputs.js'
     import axios from 'axios'
-    import { useUserStore } from '@/stores/user';
 
     export default {
+
+        name: 'LoginView',
 
         setup() {
             const userStore = useUserStore()
@@ -52,20 +59,20 @@
             }
         },
 
-        methods: {
+        mixins: [
+            inputsHandler
+        ],
 
-            handleInput(field) {
-                delete this.errors[field]
-            },
+        methods: {
 
             async submitForm() {
 
                 if (this.form.email === '') {
-                    this.errors.email = 'Your email is missing.';
+                    this.errors.email = 'Your email is missing.'
                 }
 
                 if (this.form.password === '') {
-                    this.errors.password = 'Your password is missing.';
+                    this.errors.password = 'Your password is missing.'
                 }
 
                 if (Object.keys(this.errors).length === 0) {

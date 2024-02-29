@@ -13,7 +13,9 @@ export const useToastStore = defineStore({
 
     actions: {
 
-        showToast(ms, message, classes) {
+        showToast(configs) {
+
+            let [ ms, message, classes ] = configs
 
             this.ms = parseInt(ms)
             this.message = message

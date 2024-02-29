@@ -1,46 +1,48 @@
 <template>
 
-    <nav class="py-6 px-16 border-b border-gray-200" v-if="userStore.user.isAuthenticated">
+    <div class="relative">
+        
+        <nav class="fixed top-0 left-0 right-0 h-20 py-3 px-16 bg-white border-b border-gray-200" v-if="userStore.user.isAuthenticated">
 
-        <div class="max-w-7xl mx-auto">
+            <div class="max-w-7xl mx-auto">
 
-            <div class="flex items-center justify-between">
+                <div class="flex items-center justify-between">
 
-                <div class="menu-left flex flex-col">
-                    <span class="text-sm text-slate-500">Operator</span>
-                    <h3 class="text-xl">{{ userStore.user.name }}</h3>
-                </div>
+                    <div class="menu-left flex flex-col">
+                        <span class="text-sm text-slate-500">Operator</span>
+                        <h3 class="text-xl">{{ userStore.user.name }}</h3>
+                    </div>
 
-                <div class="menu-center flex space-x-12">
+                    <div class="menu-center flex space-x-12">
 
-                    <RouterLink to="/home">
-                        <i class="fa-solid fa-house text-xl"></i>
-                    </RouterLink>
+                        <RouterLink to="/home">
+                            <i class="fa-solid fa-house text-xl"></i>
+                        </RouterLink>
 
-                    <RouterLink to="/car-list">
-                        <i class="fa-solid fa-car-side text-xl"></i>
-                    </RouterLink>
+                        <RouterLink to="/car-list">
+                            <i class="fa-solid fa-car-side text-xl"></i>
+                        </RouterLink>
 
-                    <RouterLink to="/car-insert">
-                        <i class="fa-solid fa-arrow-right-to-bracket text-xl"></i>
-                    </RouterLink>
+                        <RouterLink to="/car-insert">
+                            <i class="fa-solid fa-arrow-right-to-bracket text-xl"></i>
+                        </RouterLink>
 
-                </div>
+                    </div>
 
-                <div class="menu-right">
-                    <i class="fa-solid fa-bars"></i>
+                    <div class="menu-right">
+                        <i class="fa-solid fa-bars"></i>
+                    </div>
+
                 </div>
 
             </div>
 
-        </div>
+        </nav>
 
-    </nav>
+    </div>
 
-    <main class="h-screen px-8 py-6 bg-gray-100">
-        <!-- <div class="p-6 bg-white border border-gray-200 rounded-lg flex flex-col items-center"> -->
-            <RouterView />
-        <!-- </div> -->
+    <main class="h-screen mt-20 px-8 py-6 bg-gray-100">
+        <RouterView />
     </main>
 
     <Toast />
