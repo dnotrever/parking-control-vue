@@ -10,16 +10,16 @@
 
                 <div class="form-group mr-3">
                     <label class="form-label">Owner</label>
-                    <input type="text"  class="form-control mt-1 py-2 px-3" autofocus
-                        v-model="form.owner" @input="removeError('owner')" :class="{'is-invalid': errors.owner}">
-                    <p class="text-red-500" v-if="errors.owner">{{ errors.owner }}</p>
+                    <input ref="owner" type="text"  class="form-control mt-1 py-2 px-3" autofocus
+                        v-model="form.owner" :class="{'is-invalid': errors.owner}">
+                    <p class="text-red-500 text-sm" v-if="errors.owner">{{ errors.owner }}</p>
                 </div>
 
                 <div class="form-group ml-3">
                     <label class="form-label">Maker</label>
-                    <input type="text" class="form-control mt-1 py-2 px-3"
-                        v-model="form.maker" @input="removeError('maker')" :class="{'is-invalid': errors.maker}">
-                    <p class="text-red-500" v-if="errors.maker">{{ errors.maker }}</p>
+                    <input ref="maker" type="text" class="form-control mt-1 py-2 px-3"
+                        v-model="form.maker" :class="{'is-invalid': errors.maker}">
+                    <p class="text-red-500 text-sm" v-if="errors.maker">{{ errors.maker }}</p>
                 </div>
 
             </div>
@@ -28,16 +28,16 @@
 
                 <div class="form-group mr-3">
                     <label class="form-label">Model</label>
-                    <input type="text" class="form-control mt-2 py-2 px-3"
-                        v-model="form.model" @input="removeError('model')" :class="{'is-invalid': errors.model}">
-                    <p class="text-red-500" v-if="errors.model">{{ errors.model }}</p>
+                    <input ref="model" type="text" class="form-control mt-2 py-2 px-3"
+                        v-model="form.model" :class="{'is-invalid': errors.model}">
+                    <p class="text-red-500 text-sm" v-if="errors.model">{{ errors.model }}</p>
                 </div>
 
                 <div class="form-group ml-3">
                     <label class="form-label">Plate</label>
-                    <input type="text" class="form-control mt-2 py-2 px-3"
-                        v-model="form.plate" @input="removeError('plate')" :class="{'is-invalid': errors.plate}">
-                    <p class="text-red-500" v-if="errors.plate">{{ errors.plate }}</p>
+                    <input ref="plate" type="text" class="form-control mt-2 py-2 px-3"
+                        v-model="form.plate" :class="{'is-invalid': errors.plate}">
+                    <p class="text-red-500 text-sm" v-if="errors.plate">{{ errors.plate }}</p>
                 </div>
 
             </div>
@@ -46,9 +46,9 @@
 
                 <div class="form-group">
                     <label class="form-label">Space</label>
-                    <input type="text" class="form-control mt-2 py-2 px-3"
-                        v-model="form.space" @input="removeError('space')" :class="{'is-invalid': errors.space}">
-                    <p class="text-red-500" v-if="errors.space">{{ errors.space }}</p>
+                    <input ref="space" type="text" class="form-control mt-2 py-2 px-3"
+                        v-model="form.space" :class="{'is-invalid': errors.space}">
+                    <p class="text-red-500 text-sm" v-if="errors.space">{{ errors.space }}</p>
                 </div>
 
             </div>
@@ -63,9 +63,10 @@
 
 <script>
 
-    import { useToastStore } from '@/stores/toast'
-    import { inputsHandler } from '@/mixins/inputs.js'
     import axios from 'axios'
+    import { useToastStore } from '@/stores/toast'
+    import { inputsHandler } from '@/mixins/inputs'
+    import { submitValidations } from '@/mixins/submit'
 
     export default {
 
@@ -88,24 +89,70 @@
                     space: '',
                 },
                 errors: {},
+                order: [],
             }
         },
 
         mixins: [
-            inputsHandler
+            inputsHandler,
+            submitValidations,
         ],
+
+        created() {
+            
+            this.setInputFieldWatchers([
+                [this.isValid],
+            ])
+
+            const fields = {
+                'owner': [
+                    [this.maxLength, 15],
+                ],
+                'maker': [
+                    [this.maxLength, 15],
+                ],
+                'model': [
+                    [this.maxLength, 15],
+                ],
+                'plate': [
+                    [this.maxLength, 7],
+                    [this.upperCase],
+                ],
+                'space': [
+                    [this.maxLength, 10],
+                ],
+            }
+
+            this.setValidationField(fields)
+            this.setFormWatchers(fields)
+            
+        },
 
         methods: {
 
             submitForm() {
 
-                const fields = ['owner', 'maker', 'model', 'plate', 'space']
+                const fields = {
+                    'owner': [
+                        [this.required],
+                    ],
+                    'maker': [
+                        [this.required],
+                    ],
+                    'model': [
+                        [this.required],
+                    ],
+                    'plate': [
+                        [this.required],
+                    ],
+                    'space': [
+                        [this.required],
+                    ],
+                }
 
-                fields.forEach(field => {
-                    if (!this.form[field]) {
-                        this.errors[field] = 'This field is required.'
-                    }
-                })
+                this.setValidationField(fields)
+
+                this.focusIfError()
 
                 if (Object.keys(this.errors).length === 0) {
 
@@ -126,6 +173,7 @@
                         })
 
                 }
+
             },
 
         },

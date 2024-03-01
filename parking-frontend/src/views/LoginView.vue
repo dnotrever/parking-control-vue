@@ -8,17 +8,15 @@
 
             <div class="form-group">
                 <label class="form-label">Email</label>
-                <input type="text" placeholder="Insert here the email address" class="form-control mt-1 py-2 px-3"
-                    v-model="form.email" @input="removeError('email')" :class="{'is-invalid': errors.email}"
-                >
+                <input ref="email" type="text" placeholder="Insert here the email address" class="form-control mt-1 py-2 px-3" autofocus
+                    v-model="form.email" :class="{'is-invalid': errors.email}">
                 <p class="text-red-500" v-if="errors.email">{{ errors.email }}</p>
             </div>
 
             <div class="form-group">
                 <label class="form-label">Password</label>
-                <input type="password"  placeholder="Insert here the password" class="form-control mt-2 py-2 px-3" autocomplete
-                    v-model="form.password" @input="removeError('password')" :class="{'is-invalid': errors.password}"
-                >
+                <input ref="password" type="password"  placeholder="Insert here the password" class="form-control mt-2 py-2 px-3" autocomplete
+                    v-model="form.password" :class="{'is-invalid': errors.password}">
                 <p class="text-red-500" v-if="errors.password">{{ errors.password }}</p>
             </div>
 
@@ -34,9 +32,10 @@
 
 <script>
 
-    import { useUserStore } from '@/stores/user'
-    import { inputsHandler } from '@/mixins/inputs.js'
     import axios from 'axios'
+    import { useUserStore } from '@/stores/user'
+    import { inputsHandler } from '@/mixins/inputs'
+    import { submitValidations } from '@/mixins/submit'
 
     export default {
 
@@ -56,24 +55,51 @@
                     password: '',
                 },
                 errors: {},
+                order: [],
             }
         },
 
         mixins: [
-            inputsHandler
+            inputsHandler,
+            submitValidations,
         ],
+
+        created() {
+
+            this.setInputFieldWatchers([
+                [this.isValid],
+            ])
+
+            const fields = {
+                'email': [
+                    //
+                ],
+                'password': [
+                    //
+                ],
+            }
+
+            this.setValidationField(fields)
+            this.setFormWatchers(fields)
+
+        },
 
         methods: {
 
             async submitForm() {
 
-                if (this.form.email === '') {
-                    this.errors.email = 'Your email is missing.'
+                const fields = {
+                    'email': [
+                        [this.required],
+                    ],
+                    'password': [
+                        [this.required],
+                    ],
                 }
 
-                if (this.form.password === '') {
-                    this.errors.password = 'Your password is missing.'
-                }
+                this.setValidationField(fields)
+
+                this.focusIfError()
 
                 if (Object.keys(this.errors).length === 0) {
 

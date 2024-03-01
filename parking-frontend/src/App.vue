@@ -78,3 +78,11 @@
     }
 
 </script>
+
+<style>
+
+    .form-label {
+        margin-bottom: 0;
+    }
+
+</style>
