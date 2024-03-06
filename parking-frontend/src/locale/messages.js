@@ -7,8 +7,8 @@ export const messages = {
         },
 
         label: {
-            owner: 'Owner',
-            maker: 'Maker',
+            phone: 'Phone',
+            email: 'Email',
         },
 
         button: {
@@ -16,8 +16,9 @@ export const messages = {
         },
 
         validations: {
-            required: 'The field {property} is required.',
-            minLength: 'The {property} field must have a min length of {min}.',
+            required: 'This field is required.',
+            minLength: 'This field must have a min length of {min}.',
+            phone: 'Invalid phone number.',
         }
 
     },
@@ -29,8 +30,8 @@ export const messages = {
         },
 
         label: {
-            owner: 'Proprietário',
-            maker: 'Fabricante',
+            phone: 'Celular',
+            email: 'Email',
         },
 
         button: {
@@ -38,8 +39,9 @@ export const messages = {
         },
 
         validations: {
-            required: 'Campo {property} é obrigatório.',
-            minLength: "O campo @.capitalize:label{property} deve conter pelo menos {min} caracteres.",
+            required: 'Campo obrigatório.',
+            minLength: "Este campo deve conter pelo menos {min} caracteres.",
+            phone: 'Número de celular inválido.',
         }
 
     },
