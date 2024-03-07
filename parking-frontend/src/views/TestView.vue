@@ -2,20 +2,26 @@
 
     // _____ Imports _____
 
-    import { reactive, computed } from 'vue'
+    import { reactive, computed, nextTick, watch } from 'vue'
     import { helpers } from '@vuelidate/validators'
-    import { required } from '@/locale/validators'
+    import { required, minLength, maxLength } from '@/locale/validators'
     import { vMaska } from "maska"
     import useVuelidate from '@vuelidate/core'
     import i18n from '@/plugins/i18n'
     import BaseInput from '@/components/BaseInput.vue'
-    
 
     // _____ Variables _____
 
     const formData = reactive({
-        phone: '',
         email: '',
+        name: '',
+        phone: '',
+    })
+
+    const formErrors = reactive({
+        email: '',
+        name: '',
+        phone: '',
     })
 
     const messages = i18n.global
@@ -29,54 +35,113 @@
 
     const rules = computed(() => {
         return {
+            email: {
+                required,
+            },
+            name: {
+                required,
+                minLength: minLength(3),
+                maxLength: maxLength(20),
+            },
             phone: {
                 required,
                 phoneValidate: helpers.withMessage(messages.t('validations.phone'), phoneValidate),
-            },
-            email: {
-                required,
             },
         }
     })
 
     const v$ = useVuelidate(rules, formData)
 
-    const validateField = (field) => {
-        v$.value[field].$touch()
-        v$.value[field].$validate()
-    }
-    
+    const validateField = async (field) => {
 
-    // _____ Methods _____
+        if (formData[field]) {
 
-    const focusIfError = () => {
+            let validator = v$.value[field]
 
-        const inputs = document.querySelectorAll('.is-invalid input')
+            let fieldError = await validator.$errors[0]
+            let result = await validator.$validate()
 
-        if (inputs.length > 0) {
-            inputs[0].focus()
-        }
+            if (fieldError !== undefined && !result) {
+                formErrors[field] = await fieldError.$message
+            }
+            else {
+                formErrors[field] = ''
+            }
 
-    }
-    
-    const submitForm = async () => {
-
-        const result = await v$.value.$validate()
-
-        if (result) {
-
-            alert('Success!')
-
-            // Object.keys(formData).forEach(key => {
-            //     formData[key] = ''
-            // })
+            validator.$touch()
+            validator.$validate()
 
         } else {
 
-            focusIfError()
+            formErrors[field] = ''
 
         }
 
+    }
+
+
+    // _____ Methods _____
+
+    const focusIfError = async () => {
+
+        await nextTick()
+
+        let inputs = document.querySelectorAll('.is-invalid')
+
+        if (inputs.length > 0) {
+            inputs[0].querySelector('input').focus()
+        }
+
+    }
+
+    const submitForm = async () => {
+        
+        let result = await v$.value.$validate()
+
+        if (result) {
+
+            Object.keys(formData).forEach(key => {
+                formData[key] = ''
+            })
+
+            Object.keys(formErrors).forEach(key => {
+                formErrors[key] = ''
+            })
+
+            alert('Success!')
+
+            document.querySelectorAll('input')[0].focus()
+
+        } else {
+
+            for (let field in formErrors) {
+
+                let fieldError = v$.value[field].$errors[0]
+
+                if (fieldError !== undefined) {
+                    formErrors[field] = await fieldError.$message
+                }
+
+            }
+
+            focusIfError()
+        }
+
+    }
+
+
+    // _____ Masks _____
+
+    const capitalize = (value) => {
+        return value.toLowerCase().replace(/(?:^|\s)\S/g, (match) => match.toUpperCase())
+    }
+
+    const upper = (value) => {
+        return value.replace(/[a-zà-ú]/g, (match) => match.toUpperCase())
+    }
+
+    const lower = (value) => {
+        return value.replace(/[A-ZÀ-Ú]/g, (match) => match.toLowerCase())
     }
 
 </script>
@@ -93,32 +158,37 @@
 
             <div class="input-container">
 
-                <BaseInput :label="$t('label.phone')" v-model="formData.phone" @input="validateField('phone')" v-maska data-maska="(##) #####-####" autofocus 
-                    :class="{'is-valid': formData.phone && !v$.phone.$errors[0], 'is-invalid': v$.phone.$errors[0]}" />
+                <BaseInput :label="$t('label.email')" v-model="formData.email" @input="validateField('email')" autofocus
+                    :class="{'is-valid': formData.email && !formErrors.email, 'is-invalid': formErrors.email}" />
 
-                <p class="text-red-500 text-sm mt-1"
-                    v-for="error in v$.phone.$errors">{{ error.$message }}</p>
+                <p class="text-red-500 text-sm mt-1">{{ formErrors.email }}</p>
 
-                    
-                    
             </div>
 
             <div class="input-container">
 
-                <BaseInput :label="$t('label.email')" v-model="formData.email" @input="validateField('email')" autofocus
-                    :class="{'is-valid': formData.email && !v$.email.$errors[0], 'is-invalid': v$.email.$errors[0]}" />
+                <BaseInput :label="$t('label.name')" v-model="formData.name" @input="validateField('name')"
+                    :class="{'is-valid': formData.name && !formErrors.name, 'is-invalid': formErrors.name}" />
 
-                <p class="text-red-500 text-sm mt-1"
-                    v-for="error in v$.email.$errors">{{ error.$message }}</p>
+                <p class="text-red-500 text-sm mt-1">{{ formErrors.name }}</p>
+
+            </div>
+
+            <div class="input-container">
+
+                <BaseInput :label="$t('label.phone')" v-model="formData.phone" @input="validateField('phone')"
+                    :class="{'is-valid': formData.phone && !formErrors.phone, 'is-invalid': formErrors.phone}" />
+
+                <p class="text-red-500 text-sm mt-1">{{ formErrors.phone }}</p>
 
             </div>
 
             <button class="py-2 px-6 bg-purple-600 text-white rounded-lg tracking-wider text-xl">
                 {{ $t('button.register') }}
             </button>
-  
+
         </form>
-        
+
     </div>
 
 </template>
