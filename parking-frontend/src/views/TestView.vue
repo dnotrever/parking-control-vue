@@ -37,6 +37,7 @@
         return {
             email: {
                 required,
+                minLength: minLength(3),
             },
             name: {
                 required,
@@ -52,32 +53,30 @@
 
     const v$ = useVuelidate(rules, formData)
 
-    const validateField = async (field) => {
+    // const validateField = async (field) => {
 
-        if (formData[field]) {
+        // const validator = await v$.value[field]
 
-            let validator = v$.value[field]
+        // if (formData[field]) {
 
-            let fieldError = await validator.$errors[0]
-            let result = await validator.$validate()
+        //     let fieldError = validator.$errors[0]
+        //     let result = validator.$validate()
 
-            if (fieldError !== undefined && !result) {
-                formErrors[field] = await fieldError.$message
-            }
-            else {
-                formErrors[field] = ''
-            }
+        //     formErrors[field] = fieldError !== undefined && !result ? fieldError.$message : ''
 
-            validator.$touch()
-            validator.$validate()
+        // } else {
 
-        } else {
+        //     formErrors[field] = ''
 
-            formErrors[field] = ''
+        // }
 
-        }
+    // }
 
-    }
+    watch(formData, async (newValue, oldValue) => {
+
+        console.log(newValue[formData])
+
+    })
 
 
     // _____ Methods _____
@@ -132,17 +131,34 @@
 
     // _____ Masks _____
 
-    const capitalize = (value) => {
-        return value.toLowerCase().replace(/(?:^|\s)\S/g, (match) => match.toUpperCase())
-    }
+    // const functions = {
 
-    const upper = (value) => {
-        return value.replace(/[a-zà-ú]/g, (match) => match.toUpperCase())
-    }
+    //     capitalize: (value) => {
+    //         return value.toLowerCase().replace(/(?:^|\s)\S/g, (match) => match.toUpperCase())
+    //     },
 
-    const lower = (value) => {
-        return value.replace(/[A-ZÀ-Ú]/g, (match) => match.toLowerCase())
-    }
+    //     upper: (value) => {
+    //         return value.replace(/[a-zà-ú]/g, (match) => match.toUpperCase())
+    //     },
+
+    //     lower: (value) => {
+    //         return value.replace(/[A-ZÀ-Ú]/g, (match) => match.toLowerCase())
+    //     },
+
+    // }
+
+    // const handleInput = (field, funcs) => {
+
+        // validateField(field)
+
+        // const func = functions[funcs]
+
+        // if (func) {
+        //     const value = formData[field]
+        //     formData[field] = func(value)
+        // }
+
+    // }
 
 </script>
 
@@ -158,7 +174,7 @@
 
             <div class="input-container">
 
-                <BaseInput :label="$t('label.email')" v-model="formData.email" @input="validateField('email')" autofocus
+                <BaseInput :label="$t('label.email')" v-model="formData.email"
                     :class="{'is-valid': formData.email && !formErrors.email, 'is-invalid': formErrors.email}" />
 
                 <p class="text-red-500 text-sm mt-1">{{ formErrors.email }}</p>
