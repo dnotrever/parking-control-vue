@@ -4,7 +4,8 @@ import { messages } from '@/locale/messages'
 const i18n = createI18n({
     locale: 'br',
     fallbackLocale: 'en',
-    messages
+    messages,
+    legacy: false,
 })
 
 export default i18n
