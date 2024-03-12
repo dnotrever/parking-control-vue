@@ -2,12 +2,13 @@
 
     // _____ Imports _____
 
-    import { reactive, computed, nextTick, watch, onMounted } from 'vue'
+    import { reactive, computed, watch, nextTick } from 'vue'
     import { helpers } from '@vuelidate/validators'
-    import { required, minLength, maxLength, email } from '@/locale/validators'
-    import { masks } from "@/utils/masks"
+    import { required, minLength, email, sameAs } from '@/locale/validators'
+    import IMask from 'imask'
     import useVuelidate from '@vuelidate/core'
     import i18n from '@/plugins/i18n'
+    import axios from 'axios' 
     import BaseInput from '@/components/BaseInput.vue'
 
 
@@ -17,54 +18,76 @@
         email: '',
         name: '',
         phone: '',
+        cpf: '',
+        cep: '',
         password: '',
+        password_confirmation: '',
     })
 
     const formErrors = reactive({
         email: '',
         name: '',
         phone: '',
+        cpf: '',
+        cep: '',
         password: '',
+        password_confirmation: '',
     })
 
 
     // _____ Vuelidate _____
 
     const phoneValidate = (value) => {
-        return !helpers.req(value) || value.length > 14
+        return !helpers.req(value) || value.length == 15
     }
 
     const rules = computed(() => {
         return {
-            email: {
-                required,
-                email,
-            },
-            name: {
-                required,
-                minLength: minLength(3),
-            },
-            phone: {
-                required,
-                phoneValidate: helpers.withMessage(i18n.global.t('validations.phone'), phoneValidate),
-            },
-            password: {
-                required,
-                minLength: minLength(8),
-            },
+            email: { required, email },
+            name: { required, minLength: minLength(3) },
+            phone: { required, phoneValidate: helpers.withMessage(i18n.global.t('validations.phone'), phoneValidate) },
+            cpf: { required },
+            password: { required, minLength: minLength(6) },
+            password_confirmation: { required, sameAsPassword: sameAs(formData.password) },
         }
     })
 
     const v$ = useVuelidate(rules, formData)
 
-    Object.keys(formData).forEach(field => {
+    const options = {
+        phone: {
+            mask: '(00) 00000-0000'
+        },
+        cpf: {
+            mask: '000.000.000-00'
+        },
+        cep: {
+            mask: '00.000-000'
+        },
+    }
+
+    Object.keys(formData).forEach(async field => {
+        
+        await nextTick()
+
+        const maskOptions = options[field]
+
+        if (maskOptions) {
+            var mask = new IMask(document.getElementById(field), maskOptions)
+        }
 
         watch(() => formData[field], async (newValue, oldValue) => {
 
-            if (newValue) {
-                const validator = await v$.value[field]
+            if (mask) {
+                mask.value = newValue
+                formData[field] = mask.value
+            }
+
+            const validator = await v$.value[field]
+
+            if (formData[field] && validator !== undefined) {
                 const isInvalid = ! await validator.$validate()
-                formErrors[field] = isInvalid ? await validator.$errors[0].$message : ''
+                formErrors[field] = isInvalid ? validator.$errors[0].$message : ''
             } else {
                 formErrors[field] = ''
             }
@@ -96,15 +119,20 @@
 
         if (isValid) {
 
-            Object.keys(formData).forEach(key => {
-                formData[key] = ''
-            })
-
-            Object.keys(formErrors).forEach(key => {
-                formErrors[key] = ''
-            })
-
             alert('Success!')
+
+            console.log(formData)
+
+            // await axios
+            //     .post('/api/v1/test', formData)
+            //     .then(response => {
+            //         console.log(response)
+            //     })
+
+            Object.keys(formData).forEach(field => {
+                formData[field] = ''
+                formErrors[field] = ''
+            })
 
             resetFocus()
 
@@ -112,10 +140,10 @@
 
             for (const field in formData) {
 
-                const fieldError = v$.value[field].$errors[0]
+                const fieldError = await v$.value[field]
 
-                if (fieldError !== undefined) {
-                    formErrors[field] = await fieldError.$message
+                if (fieldError !== undefined && fieldError.$errors[0] !== undefined) {
+                    formErrors[field] = await fieldError.$errors[0].$message
                 }
 
             }
@@ -125,19 +153,6 @@
         }
 
     }
-
-
-    // _____ Masks _____
-
-    onMounted(() => {
-
-        const element = (selector) => document.querySelector(selector)
-    
-        masks.email(element('#email'), 10)
-        masks.string(element('#name'), 20)
-        masks.phone(element('#phone'))
-
-    })
 
 
     // _____ Language _____
@@ -153,7 +168,10 @@
             for (const field in formData) {
                 formData[field] = ''
                 formErrors[field] = ''
-                await v$.value[field].$reset()
+                const fieldError = await v$.value[field]
+                if (fieldError !== undefined) {
+                    await fieldError.$reset()
+                }
             }
 
         }
@@ -201,11 +219,33 @@
             />
 
             <BaseInput
-                type="password" autocomplete="password"
+                v-model="formData.cpf"
+                :id="'cpf'"
+                :label="$t('label.cpf')"
+                :error="formErrors.cpf"
+            />
+
+            <BaseInput
+                v-model="formData.cep"
+                :id="'cep'"
+                :label="$t('label.cep')"
+                :error="formErrors.cep"
+            />
+
+            <BaseInput
+                type="password" autocomplete="current_password"
                 v-model="formData.password"
                 :id="'password'"
                 :label="$t('label.password')"
                 :error="formErrors.password"
+            />
+
+            <BaseInput
+                type="password" autocomplete="new_password"
+                v-model="formData.password_confirmation"
+                :id="'password_confirmation'"
+                :label="$t('label.password_confirmation')"
+                :error="formErrors.password_confirmation"
             />
 
             <button class="py-2 px-6 bg-purple-600 text-white rounded-lg tracking-wider text-xl">
