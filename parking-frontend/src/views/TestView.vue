@@ -2,13 +2,11 @@
 
     // _____ Imports _____
 
-    import { reactive, computed, watch, nextTick, onMounted } from 'vue'
-    import { helpers } from '@vuelidate/validators'
+    import { reactive, computed, watch, nextTick } from 'vue'
     import { required, minLength, email, sameAs } from '@/locale/validators'
-    import IMask from 'imask'
     import useVuelidate from '@vuelidate/core'
-    import i18n from '@/plugins/i18n'
-    import axios from 'axios' 
+    import { validate as vldt } from '@/mixins/validate'
+    import { utils as ut } from '@/mixins/utils'
     import BaseInput from '@/components/BaseInput.vue'
 
 
@@ -18,8 +16,6 @@
         email: '',
         name: '',
         phone: '',
-        cpf: '',
-        cep: '',
         password: '',
         password_confirmation: '',
     })
@@ -28,8 +24,6 @@
         email: '',
         name: '',
         phone: '',
-        cpf: '',
-        cep: '',
         password: '',
         password_confirmation: '',
     })
@@ -37,142 +31,43 @@
 
     // _____ Vuelidate _____
 
-    const phoneValidate = (value) => {
-        return !helpers.req(value) || value.length == 15
-    }
-
     const rules = computed(() => {
+
         return {
             email: { required, email },
             name: { required, minLength: minLength(3) },
-            phone: { required, phoneValidate: helpers.withMessage(i18n.global.t('validations.phone'), phoneValidate) },
-            cpf: { required },
+            phone: { required, phone: vldt.message('phone', vldt.customs.phoneValidate) },
             password: { required, minLength: minLength(6) },
             password_confirmation: { required, sameAsPassword: sameAs(formData.password) },
         }
+
     })
 
     const v$ = useVuelidate(rules, formData)
 
     const options = {
-        phone: {
-            mask: '(00) 00000-0000'
-        },
-        cpf: {
-            mask: '000.000.000-00'
-        },
-        cep: {
-            mask: '00.000-000'
-        },
+        phone: vldt.masks.phone
     }
 
-    Object.keys(formData).forEach(async field => {
-        
-        await nextTick()
-
-        const maskOptions = options[field]
-
-        if (maskOptions) {
-            var mask = new IMask(document.getElementById(field), maskOptions)
-        }
-
-        watch(() => formData[field], async (newValue, oldValue) => {
-
-            if (mask) {
-                mask.value = newValue
-                formData[field] = mask.value
-            }
-
-            const validator = await v$.value[field]
-
-            if (formData[field] && validator !== undefined) {
-                const isInvalid = ! await validator.$validate()
-                formErrors[field] = isInvalid ? validator.$errors[0].$message : ''
-            } else {
-                formErrors[field] = ''
-            }
-            
-        })
-
-    })
-
-
-    // _____ Methods _____
-
-    const resetFocus = () => {
-        document.querySelectorAll('form input')[0].focus()
-    }
-
-    const focusIfError = () => {
-
-        const inputs = document.querySelectorAll('form .is-invalid')
-
-        if (inputs.length > 0) {
-            inputs[0].focus()
-        }
-
-    }
+    vldt.validateFields(v$, formData, formErrors, watch, nextTick, options)
 
     const submitForm = async () => {
+
+        const isValid = await vldt.formIsValid(v$)
         
-        const isValid = await v$.value.$validate()
-
         if (isValid) {
+        
+            console.log('Success!', formData)
 
-            alert('Success!')
+            ut.form.resetFields(formData, formErrors)
 
-            console.log(formData)
-
-            ////
-
-            // ?
-
-            ////
-
-            Object.keys(formData).forEach(field => {
-                formData[field] = ''
-                formErrors[field] = ''
-            })
-
-            resetFocus()
+            ut.input.resetFocus()
 
         } else {
 
-            for (const field in formData) {
+            vldt.formWithErrors(v$, formData, formErrors)
 
-                const fieldError = await v$.value[field]
-
-                if (fieldError !== undefined && fieldError.$errors[0] !== undefined) {
-                    formErrors[field] = await fieldError.$errors[0].$message
-                }
-
-            }
-
-            focusIfError()
-
-        }
-
-    }
-
-
-    // _____ Language _____
-
-    const setLocale = async (lang) => {
-
-        const locale = i18n.global.locale
-
-        if (locale.value !== lang) {
-
-            locale.value = lang
-
-            for (const field in formData) {
-                formData[field] = ''
-                formErrors[field] = ''
-                const fieldError = await v$.value[field]
-                if (fieldError !== undefined) {
-                    await fieldError.$reset()
-                }
-            }
+            ut.input.focusIfError()
 
         }
 
@@ -182,17 +77,11 @@
 
 <template>
 
-    <div class="h-screen p-6 bg-white border border-gray-200 rounded-lg flex flex-col items-center">
+    <div class="h-screen p-6 flex flex-col items-center">
 
         <h2 class="mb-10 text-3xl">
             {{ $t('message.testing') }}
         </h2>
-
-        <h4>{{ $t('message.language') }}</h4>
-        <div class="mt-2 mb-5">
-            <button class="mx-2 text-2xl" @click="setLocale('en')">🇺🇸</button>
-            <button class="mx-2 text-2xl" @click="setLocale('br')">🇧🇷</button>
-        </div>
 
         <form class="space-y-6 w-2/5 flex flex-col justify-between" @submit.prevent="submitForm">
 
@@ -216,20 +105,6 @@
                 :id="'phone'"
                 :label="$t('label.phone')"
                 :error="formErrors.phone"
-            />
-
-            <BaseInput
-                v-model="formData.cpf"
-                :id="'cpf'"
-                :label="$t('label.cpf')"
-                :error="formErrors.cpf"
-            />
-
-            <BaseInput
-                v-model="formData.cep"
-                :id="'cep'"
-                :label="$t('label.cep')"
-                :error="formErrors.cep"
             />
 
             <BaseInput

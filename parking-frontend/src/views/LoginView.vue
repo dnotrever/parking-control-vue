@@ -20,8 +20,7 @@
 
     const fields = [
         'username',
-        'password1',
-        'password2',
+        'password',
     ]
 
     const formData = ut.form.reactiveFields(fields)
@@ -34,8 +33,7 @@
 
         return {
             username: { required },
-            password1: { required, minLength: minLength(6) },
-            password2: { required, minLength: minLength(6), sameAsPassword: sameAs(formData.password1) },
+            password: { required, minLength: minLength(6) },
         }
 
     })
@@ -51,12 +49,12 @@
         if (isValid) {
 
             axios
-                .post('/api/auth/register/', formData)
+                .post('/api/auth/login/', formData)
                 .then(response => {
-                    ut.toast.show(10, 'User was successfully registered.', 'success')
+                    console.log(response.data)
                 })
                 .catch(error => {
-                    ut.toast.show(10, 'Something went wrong...', 'error')
+                    console.log(error.data)
                 })
 
             ut.form.resetFields(formData, formErrors)
@@ -80,7 +78,7 @@
     <div class="h-screen p-6 flex flex-col items-center">
 
         <h2 class="mb-10 text-3xl">
-            {{ $t('message.signup') }}
+            {{ $t('message.signin') }}
         </h2>
 
         <form class="space-y-6 w-2/5 flex flex-col justify-between" @submit.prevent="submitForm">
@@ -94,22 +92,14 @@
 
             <BaseInput
                 type="password" autocomplete="current_password"
-                v-model="formData.password1"
-                :id="'password1'"
-                :label="$t('label.password1')"
-                :error="formErrors.password1"
-            />
-
-            <BaseInput
-                type="password" autocomplete="new_password"
-                v-model="formData.password2"
-                :id="'password2'"
-                :label="$t('label.password2')"
-                :error="formErrors.password2"
+                v-model="formData.password"
+                :id="'password'"
+                :label="$t('label.password')"
+                :error="formErrors.password"
             />
 
             <button class="py-2 px-6 bg-purple-600 text-white rounded-lg tracking-wider text-xl">
-                {{ $t('button.register') }}
+                {{ $t('button.login') }}
             </button>
 
         </form>

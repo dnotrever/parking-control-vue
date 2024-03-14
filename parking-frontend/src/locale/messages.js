@@ -4,6 +4,8 @@ export const messages = {
 
         message: {
             testing: 'Testing',
+            signup: 'Signup',
+            signin: 'Login',
             language: 'Change the Language',
         },
 
@@ -14,12 +16,16 @@ export const messages = {
             cpf: 'CPF',
             rg: 'RG',
             cep: 'CEP',
+            username: 'Username',
             password: 'Password',
+            password1: 'Password',
             password_confirmation: 'Password Confirmation',
+            password2: 'Password Confirmation',
         },
 
         button: {
             register: 'Register',
+            login: 'Access',
         },
 
         validations: {
@@ -38,6 +44,8 @@ export const messages = {
 
         message: {
             testing: 'Testando',
+            signup: 'Cadastrar',
+            signin: 'Acessar',
             language: 'Altere o Idioma',
         },
 
@@ -48,12 +56,16 @@ export const messages = {
             cpf: 'CPF',
             rg: 'RG',
             cep: 'CEP',
+            username: 'Nome',
             password: 'Senha',
+            password1: 'Senha',
             password_confirmation: 'Confirmação da Senha',
+            password2: 'Confirmação da Senha',
         },
 
         button: {
             register: 'Registrar',
+            login: 'Acessar',
         },
 
         validations: {
