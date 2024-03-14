@@ -23,15 +23,10 @@
     }
 
     const setLocale = async (lang) => {
-
         if (locale.value !== lang) {
-
             window.location.reload()
-
             document.cookie = `language=${lang}`
-
         }
-
     }
 
 </script>

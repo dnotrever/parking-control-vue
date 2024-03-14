@@ -1,31 +1,24 @@
 <script setup>
-
-
 </script>
 
 <template>
 
-    <div class="toast-container fixed bottom-0 end-0 p-3">
-
-        <div class="toast text-white px-2 py-1 text-lg tracking-wider" role="alert" aria-live="assertive" aria-atomic="true" data-bs-autohide="false">
-
+    <div id="toast-container" class="fixed bottom-0 end-0 p-3">
+        <div class="toast px-2 py-1 text-lg tracking-wider" role="alert" aria-live="assertive" aria-atomic="true" data-bs-autohide="false">
             <div class="flex items-center">
-
-                <div class="toast-body"></div>
-
-                <button type="button" class="btn-close btn-close-white me-2 ms-auto" data-bs-dismiss="toast" aria-label="Close"></button>
-
+                <div class="toast-body text-white"></div>
+                <button type="button" class="btn-close mx-1 ms-auto flex items-center justify-center" data-bs-dismiss="toast" aria-label="Close">
+                    <i class="fa-solid fa-xmark text-xl text-white"></i>
+                </button>
             </div>
-
         </div>
-
     </div>
-
+    
 </template>
   
 <style scoped>
 
-    .toast-container {
+    #toast-container {
         z-index: 9999;  
     }
 

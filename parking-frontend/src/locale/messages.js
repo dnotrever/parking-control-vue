@@ -22,6 +22,11 @@ export const messages = {
             password_confirmation: 'Password Confirmation',
             password2: 'Password Confirmation',
         },
+        
+        link: {
+            login: 'Access your Account',
+            register: 'Create an Account',
+        },
 
         button: {
             register: 'Register',
@@ -61,6 +66,11 @@ export const messages = {
             password1: 'Senha',
             password_confirmation: 'Confirmação da Senha',
             password2: 'Confirmação da Senha',
+        },
+
+        link: {
+            login: 'Acesse sua Conta',
+            register: 'Crie uma Conta',
         },
 
         button: {

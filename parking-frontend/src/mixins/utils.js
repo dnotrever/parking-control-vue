@@ -53,7 +53,7 @@ export const utils = {
 
     toast: {
 
-        show: (timeout, message, status) => {
+        show: (message, status, timeout) => {
 
             const statusColors = {
                 'success': 'bg-green-700',

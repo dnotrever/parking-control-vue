@@ -2,13 +2,10 @@
 
     // _____ Imports _____
 
-    //// Packages
-
     import { computed } from 'vue'
+    import { RouterLink } from 'vue-router'
     import useVuelidate from '@vuelidate/core'
     import axios from 'axios'
-
-    //// System
 
     import { required, minLength, sameAs } from '@/locale/validators'
     import { validate as vldt } from '@/mixins/validate'
@@ -53,10 +50,10 @@
             axios
                 .post('/api/auth/register/', formData)
                 .then(response => {
-                    ut.toast.show(10, 'User was successfully registered.', 'success')
+                    ut.toast.show('User was successfully registered.', 'success', 10)
                 })
                 .catch(error => {
-                    ut.toast.show(10, 'Something went wrong...', 'error')
+                    ut.toast.show('Something went wrong...', 'error', 10)
                 })
 
             ut.form.resetFields(formData, formErrors)
@@ -113,6 +110,12 @@
             </button>
 
         </form>
+
+        <div class="my-4">
+            <router-link to="/login">
+                {{ $t('link.login') }}
+            </router-link>
+        </div>
 
     </div>
 
