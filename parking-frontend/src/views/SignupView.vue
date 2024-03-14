@@ -5,11 +5,13 @@
     import { computed } from 'vue'
     import { RouterLink } from 'vue-router'
     import useVuelidate from '@vuelidate/core'
-    import axios from 'axios'
-
+    
     import { required, minLength, sameAs } from '@/locale/validators'
-    import { validate as vldt } from '@/mixins/validate'
+
+    import { validate as vt } from '@/mixins/validate'
     import { utils as ut } from '@/mixins/utils'
+    import { requests as req } from '@/mixins/requests'
+
     import BaseInput from '@/components/BaseInput.vue'
 
 
@@ -39,22 +41,15 @@
 
     const v$ = useVuelidate(rules, formData)
 
-    vldt.validateFields(v$, formData, formErrors)
+    vt.validateFields(v$, formData, formErrors)
 
     const submitForm = async () => {
 
-        const isValid = await vldt.formIsValid(v$)
+        const isValid = await vt.formIsValid(v$)
         
         if (isValid) {
 
-            axios
-                .post('/api/auth/register/', formData)
-                .then(response => {
-                    ut.toast.show('User was successfully registered.', 'success', 10)
-                })
-                .catch(error => {
-                    ut.toast.show('Something went wrong...', 'error', 10)
-                })
+            req.registration(formData)
 
             ut.form.resetFields(formData, formErrors)
 
@@ -62,7 +57,7 @@
 
         } else {
 
-            vldt.formWithErrors(v$, formData, formErrors)
+            vt.formWithErrors(v$, formData, formErrors)
 
             ut.input.focusIfError()
 

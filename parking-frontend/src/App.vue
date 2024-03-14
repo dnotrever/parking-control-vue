@@ -1,12 +1,11 @@
 <script setup>
 
     import { RouterLink, RouterView } from 'vue-router'
+    import i18n from '@/plugins/i18n'
     import Toast from '@/components/Toast.vue'
-    
+
 
     // _____ Language _____
-
-    import i18n from '@/plugins/i18n'
 
     const locale = i18n.global.locale
 

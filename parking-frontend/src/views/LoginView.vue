@@ -5,11 +5,13 @@
     import { computed } from 'vue'
     import { RouterLink } from 'vue-router'
     import useVuelidate from '@vuelidate/core'
-    import axios from 'axios'
 
-    import { required, minLength, sameAs } from '@/locale/validators'
-    import { validate as vldt } from '@/mixins/validate'
+    import { required, minLength } from '@/locale/validators'
+
+    import { validate as vt } from '@/mixins/validate'
     import { utils as ut } from '@/mixins/utils'
+    import { requests as req } from '@/mixins/requests'
+
     import BaseInput from '@/components/BaseInput.vue'
 
 
@@ -37,37 +39,19 @@
 
     const v$ = useVuelidate(rules, formData)
 
-    vldt.validateFields(v$, formData, formErrors)
+    vt.validateFields(v$, formData, formErrors)
 
     const submitForm = async () => {
 
-        const isValid = await vldt.formIsValid(v$)
+        const isValid = await vt.formIsValid(v$)
         
         if (isValid) {
 
-            axios
-                .post('/api/auth/login/', formData)
-                .then(response => {
-
-                    console.log(response.data)
-
-                    ut.toast.show('Logged in successfully.', 'success', 10)
-
-                    ut.form.resetFields(formData, formErrors)
-
-                    ut.input.resetFocus()
-
-                })
-                .catch(error => {
-                    const message = error.response.data.non_field_errors[0]
-                    ut.toast.show(message, 'error', 10)
-                })
-
-            
+            req.login(formData)
 
         } else {
 
-            vldt.formWithErrors(v$, formData, formErrors)
+            vt.formWithErrors(v$, formData, formErrors)
 
             ut.input.focusIfError()
 
